@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ПК СЭК «СИГМА» — операционная система коллективного действия</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Golos+Text:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#374B60;
+    --green:#27C69C;
+    --graphite:#1A1E22;
+    --paper:#F3F9F9;
+    --navy-deep:#222E3C;
+    --green-tint:#E3F6F0;
+    --grey:#95A2AC;
+    --line:rgba(55,75,96,.16);
+    --line-soft:rgba(55,75,96,.10);
+    --white:#FFFFFF;
+
+    --f-disp:'Montserrat',Arial,sans-serif;
+    --f-body:'Golos Text','Segoe UI',Arial,sans-serif;
+    --f-mono:'IBM Plex Mono','Consolas',monospace;
+
+    --mark-accent:var(--green);
+    --maxw:1180px;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--f-body);
+    color:var(--graphite);
+    background:var(--paper);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+
+  /* ---- mono utility / eyebrow ---- */
+  .eyebrow{
+    font-family:var(--f-mono);
+    font-size:12.5px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--green);
+    display:inline-flex;align-items:center;gap:9px;
+  }
+  .eyebrow::before{content:"";width:7px;height:7px;background:var(--green);display:inline-block}
+  .eyebrow.muted{color:var(--grey)}
+  .eyebrow.muted::before{background:var(--grey)}
+
+  h1,h2,h3{font-family:var(--f-disp);color:var(--navy);line-height:1.08;letter-spacing:-.01em;overflow-wrap:break-word}
+  .eyebrow{overflow-wrap:anywhere}
+
+  /* ---- the mark ---- */
+  .mark{color:var(--navy)}
+  .mark svg{display:block;width:100%;height:100%}
+
+  /* ================= HEADER ================= */
+  header{
+    position:sticky;top:0;z-index:60;
+    background:rgba(243,249,249,.86);
+    backdrop-filter:saturate(140%) blur(10px);
+    border-bottom:1px solid var(--line-soft);
+  }
+  .nav{display:flex;align-items:center;gap:26px;height:70px}
+  .brand{display:flex;align-items:center;gap:12px;flex-shrink:0}
+  .brand .mk{width:30px;height:29px;color:var(--navy)}
+  .brand .nm{font-family:var(--f-disp);font-weight:800;font-size:15px;color:var(--navy);letter-spacing:.02em;line-height:1.05}
+  .brand .nm small{display:block;font-family:var(--f-mono);font-weight:400;font-size:9.5px;letter-spacing:.1em;color:var(--grey);text-transform:uppercase}
+  .nav nav{display:flex;gap:22px;margin-left:auto}
+  .nav nav a{font-size:14.5px;color:var(--navy);font-weight:500;padding:6px 0;position:relative;transition:color .18s}
+  .nav nav a::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:0;background:var(--green);transition:width .22s}
+  .nav nav a:hover{color:var(--graphite)}
+  .nav nav a:hover::after{width:100%}
+  .btn{
+    font-family:var(--f-disp);font-weight:600;font-size:14px;
+    border:none;cursor:pointer;border-radius:2px;
+    padding:11px 18px;transition:transform .12s, background .18s, color .18s, box-shadow .18s;
+    display:inline-flex;align-items:center;gap:9px;white-space:nowrap;
+  }
+  .btn-primary{background:var(--green);color:var(--navy-deep)}
+  .btn-primary:hover{background:#1fb78e;transform:translateY(-1px);box-shadow:0 6px 18px rgba(39,198,156,.32)}
+  .btn-ghost{background:transparent;color:var(--navy);border:1.5px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--navy);transform:translateY(-1px)}
+  .btn-light{background:var(--white);color:var(--navy);border:1.5px solid transparent}
+  .btn-light:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(34,46,60,.25)}
+  .nav .btn{margin-left:4px}
+  .burger{display:none;margin-left:auto;background:none;border:1px solid var(--line);border-radius:2px;width:42px;height:38px;cursor:pointer;color:var(--navy)}
+  .burger span{display:block;width:18px;height:2px;background:currentColor;margin:3px auto}
+
+  /* ================= HERO ================= */
+  .hero{position:relative;padding:74px 0 86px;overflow:hidden}
+  .hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:54px;align-items:center}
+  .hero h1{font-weight:800;font-size:clamp(34px,5vw,60px);margin:20px 0 0}
+  .hero h1 .hl{color:var(--green)}
+  .hero .lede{font-size:18px;color:#33414f;max-width:33em;margin:22px 0 30px}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap}
+  .hero-status{
+    margin-top:30px;display:flex;gap:26px;flex-wrap:wrap;
+    font-family:var(--f-mono);font-size:12px;color:var(--grey);letter-spacing:.04em;
+  }
+  .hero-status b{color:var(--navy);font-weight:500}
+
+  /* faint background mark */
+  .hero-bg{position:absolute;right:-120px;top:-60px;width:560px;height:540px;color:var(--navy);opacity:.035;pointer-events:none}
+
+  /* registry console panel */
+  .console{
+    background:var(--navy-deep);
+    border-radius:8px;
+    box-shadow:0 30px 70px -28px rgba(34,46,60,.55);
+    position:relative;
+    overflow:hidden;
+  }
+  .console::before{ /* oversized sigma bracket embracing the list */
+    content:"";position:absolute;left:-40px;top:50%;transform:translateY(-50%);
+    width:230px;height:300px;color:var(--green);opacity:.07;pointer-events:none;
+    background:none;
+  }
+  .console-bar{
+    display:flex;align-items:center;gap:10px;
+    padding:13px 18px;border-bottom:1px solid rgba(255,255,255,.09);
+    font-family:var(--f-mono);font-size:12.5px;color:#c6d2dc;
+  }
+  .dots{display:flex;gap:6px;margin-right:4px}
+  .dots i{width:9px;height:9px;border-radius:50%;display:block;opacity:.8}
+  .dots i:nth-child(1){background:#ff6b6b}
+  .dots i:nth-child(2){background:#ffd166}
+  .dots i:nth-child(3){background:var(--green)}
+  .console-bar .stat{margin-left:auto;color:var(--green);display:flex;align-items:center;gap:7px}
+  .console-bar .stat .pulse{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(39,198,156,.6);animation:pulse 2.4s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(39,198,156,.55)}70%{box-shadow:0 0 0 9px rgba(39,198,156,0)}100%{box-shadow:0 0 0 0 rgba(39,198,156,0)}}
+
+  .console-body{padding:18px 18px 22px;position:relative;z-index:2}
+  .console-cap{font-family:var(--f-mono);font-size:11.5px;color:#7d8b97;margin-bottom:12px;letter-spacing:.03em}
+  .proc{
+    display:flex;align-items:center;gap:13px;
+    padding:13px 12px;border-radius:5px;
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.05);
+    margin-bottom:9px;
+    opacity:0;transform:translateY(8px);
+  }
+  .proc .sq{width:11px;height:11px;background:var(--green);flex-shrink:0}
+  .proc .nm{font-family:var(--f-body);font-size:14.5px;color:#eaf1f4;font-weight:500;flex:1;min-width:0}
+  .proc .tag{
+    font-family:var(--f-mono);font-size:11px;letter-spacing:.03em;
+    color:var(--green);background:rgba(39,198,156,.12);
+    border:1px solid rgba(39,198,156,.28);
+    padding:4px 9px;border-radius:3px;white-space:nowrap;
+  }
+  .proc .tag.s2{color:#ffd479;background:rgba(255,212,121,.1);border-color:rgba(255,212,121,.26)}
+  .proc .tag.s3{color:#9fc0ff;background:rgba(159,192,255,.1);border-color:rgba(159,192,255,.26)}
+  .reveal-on .proc{animation:procIn .5s ease forwards}
+  .reveal-on .proc:nth-child(2){animation-delay:.06s}
+  .reveal-on .proc:nth-child(3){animation-delay:.12s}
+  .reveal-on .proc:nth-child(4){animation-delay:.18s}
+  .reveal-on .proc:nth-child(5){animation-delay:.24s}
+  .reveal-on .proc:nth-child(6){animation-delay:.30s}
+  @keyframes procIn{to{opacity:1;transform:translateY(0)}}
+
+  /* ================= SECTION SHELL ================= */
+  section{padding:78px 0}
+  .sec-head{max-width:42em}
+  .sec-head h2{font-weight:700;font-size:clamp(26px,3.4vw,40px);margin:16px 0 0}
+  .sec-head p{margin-top:16px;font-size:17px;color:#3a4855}
+
+  .band-white{background:var(--white);border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
+
+  /* ---- What is it ---- */
+  .what{display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:center}
+  .what .body p{font-size:16.5px;color:#39434e;margin-top:16px}
+  .sum-card{
+    background:var(--navy-deep);border-radius:8px;padding:34px 30px;color:#dce5ec;
+    box-shadow:0 26px 60px -30px rgba(34,46,60,.5);
+  }
+  .sum-card .k{font-family:var(--f-mono);font-size:12px;color:#7d8b97;letter-spacing:.06em;text-transform:uppercase}
+  .sum-eq{font-family:var(--f-mono);font-size:clamp(17px,2.3vw,23px);color:#eaf1f4;margin:16px 0 6px;line-height:1.7}
+  .sum-eq .sg{color:var(--green);font-size:1.35em;font-weight:500;vertical-align:-2px}
+  .sum-eq .v{color:#9fc0ff}
+  .sum-note{font-size:14px;color:#aeb9c3;margin-top:14px;font-family:var(--f-body);line-height:1.55}
+
+  /* ---- How it works (lifecycle) ---- */
+  .steps{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:42px;counter-reset:s}
+  .step{position:relative;padding:0 22px 0 0}
+  .step:not(:last-child)::after{content:"";position:absolute;right:11px;top:9px;bottom:auto;width:22px;height:1px;background:var(--line)}
+  .step .no{font-family:var(--f-mono);font-size:13px;color:var(--green);letter-spacing:.06em}
+  .step .ic{width:18px;height:18px;margin:14px 0 12px;color:var(--navy)}
+  .step h3{font-size:17px;font-weight:600;line-height:1.22}
+  .step p{font-size:14px;color:#52606c;margin-top:9px;padding-right:6px}
+
+  /* ---- Project types chips ---- */
+  .types{margin-top:40px}
+  .chips{display:flex;flex-wrap:wrap;gap:11px;margin-top:18px}
+  .chip{
+    font-family:var(--f-mono);font-size:13px;color:var(--navy);
+    background:var(--green-tint);border:1px solid rgba(39,198,156,.3);
+    padding:9px 14px;border-radius:3px;
+  }
+  .chip .pre{color:var(--green);margin-right:7px}
+
+  /* ---- Modules grid ---- */
+  .mods{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:44px}
+  .mod{
+    background:var(--white);border:1px solid var(--line-soft);border-radius:7px;
+    padding:24px 22px 26px;transition:transform .16s, box-shadow .16s, border-color .16s;
+    position:relative;overflow:hidden;
+  }
+  .mod::before{content:"";position:absolute;left:0;top:0;height:3px;width:0;background:var(--green);transition:width .25s}
+  .mod:hover{transform:translateY(-4px);box-shadow:0 18px 40px -24px rgba(34,46,60,.45);border-color:transparent}
+  .mod:hover::before{width:100%}
+  .mod .mno{font-family:var(--f-mono);font-size:12px;color:var(--grey);letter-spacing:.05em}
+  .mod .mic{width:24px;height:24px;color:var(--navy);margin:14px 0 14px}
+  .mod h3{font-size:17px;font-weight:600;line-height:1.2}
+  .mod p{font-size:14px;color:#54616d;margin-top:9px}
+
+  /* ---- Mission & Manifesto ---- */
+  .manifest{position:relative;overflow:hidden}
+  .manifest .mf-bg{position:absolute;right:-110px;bottom:-130px;width:460px;height:450px;color:var(--navy);opacity:.035;pointer-events:none}
+  .mission-card{
+    background:var(--navy-deep);border-radius:9px;color:#dfe7ee;
+    padding:40px 44px;position:relative;overflow:hidden;
+    box-shadow:0 28px 64px -32px rgba(34,46,60,.5);
+  }
+  .mission-card .eyebrow{color:var(--green)}
+  .mission-q{
+    font-family:var(--f-disp);font-weight:700;color:var(--white);
+    font-size:clamp(22px,3vw,33px);line-height:1.24;letter-spacing:-.01em;
+    margin:18px 0 0;max-width:21em;overflow-wrap:break-word;
+  }
+  .mission-sub{margin-top:24px;display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;font-size:15px;color:#aeb9c3}
+  .mission-sub .tag{
+    font-family:var(--f-mono);font-size:11px;letter-spacing:.04em;color:var(--green);
+    background:rgba(39,198,156,.12);border:1px solid rgba(39,198,156,.28);
+    padding:5px 10px;border-radius:3px;white-space:nowrap;margin-top:1px;
+  }
+  .mission-sub span:last-child{max-width:34em}
+  .mf-head{margin-top:56px}
+  .theses{display:grid;grid-template-columns:1fr 1fr;gap:26px 50px;margin-top:30px}
+  .th{display:flex;gap:16px;align-items:flex-start}
+  .th .tno{font-family:var(--f-mono);font-size:13px;color:var(--green);padding-top:3px;letter-spacing:.04em;flex-shrink:0}
+  .th b{font-family:var(--f-disp);font-weight:600;color:var(--navy);font-size:17px;display:block;margin-bottom:5px;line-height:1.2}
+  .th span{font-size:14.5px;color:#52606c;line-height:1.55}
+
+  /* ---- Join / form ---- */
+  .join{background:var(--navy-deep);color:#dfe7ee;position:relative;overflow:hidden}
+  .join .eyebrow{color:var(--green)}
+  .join h2{color:var(--white)}
+  .join .sec-head p{color:#aeb9c3}
+  .join-bg{position:absolute;left:-90px;bottom:-110px;width:420px;height:410px;color:var(--green);opacity:.05;pointer-events:none}
+  .join-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:54px;align-items:start;margin-top:42px;position:relative;z-index:2}
+  .join-points{display:flex;flex-direction:column;gap:20px}
+  .jp{display:flex;gap:14px;align-items:flex-start}
+  .jp .sq{width:12px;height:12px;background:var(--green);margin-top:6px;flex-shrink:0}
+  .jp b{font-family:var(--f-disp);font-weight:600;color:var(--white);font-size:16px;display:block;margin-bottom:3px}
+  .jp span{font-size:14.5px;color:#aeb9c3}
+  .jp-or{font-family:var(--f-mono);font-size:13px;color:#8b97a3;margin-top:6px}
+  .jp-or a{color:var(--green);border-bottom:1px solid rgba(39,198,156,.4)}
+
+  form.fb{background:var(--white);border-radius:9px;padding:30px 30px 32px;box-shadow:0 30px 70px -34px rgba(0,0,0,.5)}
+  .fb h3{font-size:20px;font-weight:700;margin-bottom:4px}
+  .fb .fb-sub{font-size:14px;color:#5a6671;margin-bottom:20px}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--navy);margin-bottom:7px}
+  .field label .req{color:var(--green)}
+  .field input,.field select,.field textarea{
+    width:100%;font-family:var(--f-body);font-size:15px;color:var(--graphite);
+    background:var(--paper);border:1.5px solid var(--line);border-radius:4px;
+    padding:11px 13px;transition:border-color .16s, box-shadow .16s;
+  }
+  .field textarea{resize:vertical;min-height:96px}
+  .field input:focus,.field select:focus,.field textarea:focus{
+    outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(39,198,156,.16);
+  }
+  .field.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .field.row2 .sub{margin:0}
+  .consent{display:flex;gap:10px;align-items:flex-start;margin:4px 0 20px;font-size:12.5px;color:#5a6671;line-height:1.45}
+  .consent input{width:17px;height:17px;margin-top:2px;flex-shrink:0;accent-color:var(--green)}
+  .fb .btn-primary{width:100%;justify-content:center;font-size:15px;padding:13px}
+  .err{color:#cc3b3b;font-size:12px;margin-top:6px;display:none}
+  .field.bad input,.field.bad select,.field.bad textarea{border-color:#cc3b3b}
+  .field.bad .err{display:block}
+  .fb-done{display:none;text-align:center;padding:18px 6px}
+  .fb-done .mk{width:54px;height:52px;margin:0 auto 16px;color:var(--green)}
+  .fb-done h3{color:var(--navy)}
+  .fb-done p{font-size:14.5px;color:#54616d;margin-top:8px}
+  .fb-done .again{margin-top:18px}
+
+  /* ================= FOOTER ================= */
+  footer{background:var(--paper);border-top:1px solid var(--line);padding:54px 0 38px}
+  .foot-top{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px}
+  .foot-brand .brand{margin-bottom:14px}
+  .foot-brand p{font-size:14px;color:#54616d;max-width:30em}
+  .foot-col h4{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);margin-bottom:14px;font-weight:500}
+  .foot-col a,.foot-col p{display:block;font-size:14px;color:#39434e;margin-bottom:9px}
+  .foot-col a:hover{color:var(--green)}
+  .req{margin-top:36px;padding-top:24px;border-top:1px solid var(--line-soft);
+    font-family:var(--f-mono);font-size:11.5px;color:var(--grey);line-height:1.85;letter-spacing:.02em}
+  .req b{color:#5a6671;font-weight:500}
+  .req .sep{margin:0 8px;opacity:.5}
+
+  /* ================= MODAL ================= */
+  .modal-back{
+    position:fixed;inset:0;background:rgba(26,30,34,.55);backdrop-filter:blur(3px);
+    z-index:100;display:none;align-items:center;justify-content:center;padding:24px;
+  }
+  .modal-back.open{display:flex}
+  .modal{
+    background:var(--white);border-radius:10px;max-width:420px;width:100%;
+    padding:32px 32px 30px;box-shadow:0 40px 90px -30px rgba(0,0,0,.55);
+    position:relative;animation:mIn .22s ease;
+  }
+  @keyframes mIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .modal .x{position:absolute;right:16px;top:14px;background:none;border:none;font-size:24px;color:var(--grey);cursor:pointer;line-height:1}
+  .modal .mk{width:36px;height:35px;color:var(--navy);margin-bottom:16px}
+  .modal h3{font-size:21px;font-weight:700;margin-bottom:6px}
+  .modal .m-sub{font-size:13.5px;color:#5a6671;margin-bottom:22px}
+  .modal .field{margin-bottom:15px}
+  .modal .btn-primary{width:100%;justify-content:center;padding:13px;font-size:15px}
+  .modal .m-note{font-size:12.5px;color:#6a7681;margin-top:18px;line-height:1.5;text-align:center}
+  .modal .m-note a{color:var(--green);border-bottom:1px solid rgba(39,198,156,.4)}
+
+  /* ================= RESPONSIVE ================= */
+  @media(max-width:980px){
+    .hero-grid{grid-template-columns:1fr;gap:40px}
+    .what{grid-template-columns:1fr;gap:34px}
+    .steps{grid-template-columns:1fr 1fr;gap:26px 20px}
+    .step:not(:last-child)::after{display:none}
+    .mods{grid-template-columns:1fr 1fr}
+    .join-grid{grid-template-columns:1fr;gap:36px}
+    .theses{grid-template-columns:1fr;gap:22px}
+    .mission-card{padding:32px 28px}
+    .foot-top{grid-template-columns:1fr 1fr;gap:30px}
+    .foot-brand{grid-column:1/-1}
+  }
+  @media(max-width:680px){
+    .wrap{padding:0 20px}
+    .nav nav{display:none}
+    .nav .btn.hb{display:none}
+    .burger{display:block}
+    .nav nav.open{display:flex;position:absolute;top:70px;left:0;right:0;background:var(--white);
+      flex-direction:column;gap:0;padding:8px 0;border-bottom:1px solid var(--line);box-shadow:0 12px 24px -12px rgba(0,0,0,.2)}
+    .nav nav.open a{padding:13px 24px;width:100%}
+    .nav nav.open a::after{display:none}
+    section{padding:58px 0}
+    .hero{padding:48px 0 60px}
+    .hero h1{font-size:30px}
+    .hero .eyebrow{font-size:11px;letter-spacing:.07em}
+    .console-bar{font-size:11px;padding:11px 14px}
+    .console-body{padding:14px 14px 18px}
+    .proc{padding:11px 10px;gap:10px}
+    .proc .nm{font-size:13.5px}
+    .steps{grid-template-columns:1fr}
+    .mods{grid-template-columns:1fr}
+    .field.row2{grid-template-columns:1fr}
+    .req .br{display:block;margin-top:6px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+    .proc{opacity:1!important;transform:none!important}
+  }
+</style>
+</head>
+<body>
+
+<!-- inline sigma mark definition (from brandbook) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="sigmaMark">
+      <path d="M88 18 H24 L60 60 L24 102 H88" fill="none" stroke="currentColor" stroke-width="22" stroke-linejoin="miter" stroke-miterlimit="4"/>
+      <rect x="95" y="7"  width="22" height="22" fill="var(--mark-accent)"/>
+      <rect x="95" y="91" width="22" height="22" fill="var(--mark-accent)"/>
+    </g>
+  </defs>
+</svg>
+
+<!-- ================= HEADER ================= -->
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="ПК СЭК СИГМА — на главную">
+      <span class="mk mark"><svg viewBox="0 0 124 120" aria-hidden="true"><use href="#sigmaMark"/></svg></span>
+      <span class="nm">ПК СЭК «СИГМА»<small>Операционная система кооперации</small></span>
+    </a>
+    <nav id="menu">
+      <a href="#what">Что это</a>
+      <a href="#manifest">Манифест</a>
+      <a href="#how">Как работает</a>
+      <a href="#types">Проекты</a>
+      <a href="#mods">Возможности</a>
+      <a href="#join">Присоединиться</a>
+    </nav>
+    <button class="btn btn-ghost hb" type="button" data-login>Личный кабинет</button>
+    <button class="burger" type="button" aria-label="Меню" id="burger"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <span class="hero-bg mark"><svg viewBox="0 0 124 120" aria-hidden="true"><use href="#sigmaMark"/></svg></span>
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow">Потребительский кооператив · Социально-экономический комплекс</span>
+      <h1>Операционная система <span class="hl">коллективного действия</span></h1>
+      <p class="lede">Сюда вносят проекты совместной деятельности. Под каждый собирается команда исполнителей, подключается инфраструктура поддержки, ведётся справедливый учёт усилий и распределение результата. Наработки возвращаются в общую базу знаний.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary" type="button" data-scroll="#join">Внести проект</button>
+        <button class="btn btn-ghost" type="button" data-login>Войти в личный кабинет</button>
+      </div>
+      <div class="hero-status">
+        <span><b>4</b> принципа Сигма-экономики</span>
+        <span>методология — вклад <b>ИСЭ</b></span>
+        <span>правовая форма — <b>кооператив</b></span>
+      </div>
+    </div>
+
+    <!-- registry console: project TYPES + lifecycle stages (schema, not live metrics) -->
+    <div class="console" id="console" aria-label="Реестр проектов: типы и стадии">
+      <div class="console-bar">
+        <span class="dots"><i></i><i></i><i></i></span>
+        reg://проекты
+        <span class="stat"><span class="pulse"></span>система работает</span>
+      </div>
+      <div class="console-body">
+        <div class="console-cap">// типы проектов и стадии жизненного цикла</div>
+        <div class="proc"><span class="sq"></span><span class="nm">Трансформация предприятия в солидарную экосистему</span><span class="tag">методология</span></div>
+        <div class="proc"><span class="sq"></span><span class="nm">Потребительское общество жильцов дома</span><span class="tag s2">сбор команды</span></div>
+        <div class="proc"><span class="sq"></span><span class="nm">Проект совместного действия</span><span class="tag s3">в работе</span></div>
+        <div class="proc"><span class="sq"></span><span class="nm">Кооперативная производственная команда</span><span class="tag">приём заявок</span></div>
+        <div class="proc"><span class="sq"></span><span class="nm">Запуск нового кооператива</span><span class="tag s2">сопровождение</span></div>
+        <div class="proc"><span class="sq"></span><span class="nm">…ваш тип кооперативного взаимодействия</span><span class="tag s3">внести</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WHAT IS IT ================= -->
+<section id="what" class="band-white">
+  <div class="wrap what">
+    <div class="body">
+      <span class="eyebrow muted">Что это</span>
+      <h2 style="font-weight:700;font-size:clamp(26px,3.4vw,40px);margin-top:16px">Не сервис, а среда</h2>
+      <p>«СИГМА» — добровольный самоуправляемый кооператив, который работает как общая инфраструктура для совместной деятельности. Он действует как единое юридическое лицо, способное брать сложные и долгосрочные проекты, и даёт готовые «рельсы», снижающие издержки на кооперацию.</p>
+      <p>Методологическое ядро системы — концепция Сигма-экономики, разработанная Институтом Сигма-экономики и переданная в кооператив. Поверх неё работает «клуб своих»: среда высокого доверия и прозрачности, где ценятся репутация, открытость и взаимная ответственность.</p>
+      <p>Результат общего дела — сумма вкладов каждого. Система делает каждый вклад видимым и вознаграждаемым, а наработки и идеи — защищёнными и капитализируемыми.</p>
+    </div>
+    <div class="sum-card">
+      <div class="k">Принцип суммы · ∑</div>
+      <div class="sum-eq">
+        <span class="sg">∑</span> результат&nbsp;=<br>
+        &nbsp;&nbsp;вклад<span class="v">₁</span> + вклад<span class="v">₂</span> +<br>
+        &nbsp;&nbsp;… + вклад<span class="v">ₙ</span>
+      </div>
+      <div class="sum-note">Сигма (∑) — сумма слагаемых. Цель модели — выигрыш максимального числа сторон одновременно: человека, сообщества, капитала и государства. Каждое слагаемое учтено, и каждое участвует в распределении.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MISSION & MANIFESTO ================= -->
+<section id="manifest" class="manifest">
+  <span class="mf-bg mark"><svg viewBox="0 0 124 120" aria-hidden="true"><use href="#sigmaMark"/></svg></span>
+  <div class="wrap">
+    <div class="mission-card">
+      <span class="eyebrow">Миссия</span>
+      <p class="mission-q">Сделать горизонтальную кооперацию нормой экономики, а справедливое распределение результатов труда и совместной деятельности — нормой общества.</p>
+      <div class="mission-sub">
+        <span class="tag">целевой ориентир</span>
+        <span>Горизонт — экономика, где не менее половины предприятий и коллективов работают на солидарных принципах.</span>
+      </div>
+    </div>
+
+    <div class="sec-head mf-head">
+      <span class="eyebrow muted">Манифест</span>
+      <h2>Из чего мы исходим — и что поэтому делаем</h2>
+      <p>Восемь принципов Сигма-экономики, на которых стоит система. Первые четыре — её несущая основа.</p>
+    </div>
+
+    <div class="theses">
+      <div class="th"><span class="tno">01</span><div><b>Человек — хозяин своего труда</b><span>Каждый участник — предприниматель и совладелец, а не наёмный работник.</span></div></div>
+      <div class="th"><span class="tno">02</span><div><b>Капитал — партнёр созидания</b><span>Доля в созданной ценности и приросте фондов вместо ссудного процента.</span></div></div>
+      <div class="th"><span class="tno">03</span><div><b>Доверие строится на прозрачности</b><span>Открытые процессы, деньги и решения вместо аппарата контроля.</span></div></div>
+      <div class="th"><span class="tno">04</span><div><b>Решают те, кого решение касается</b><span>Согласие вместо приказа; в общем деле — «один член, один голос».</span></div></div>
+      <div class="th"><span class="tno">05</span><div><b>Земля — предмет совладения и заботы</b><span>Различаем пользование и владение, отвечаем за плодородие для следующих.</span></div></div>
+      <div class="th"><span class="tno">06</span><div><b>Кооперация кооперативов</b><span>Общая инфраструктура даёт малым то, что было доступно только корпорациям.</span></div></div>
+      <div class="th"><span class="tno">07</span><div><b>Только добровольно и эволюционно</b><span>Никакой принудительной коллективизации — убеждаем работающими образцами.</span></div></div>
+      <div class="th"><span class="tno">08</span><div><b>Метод — не догма</b><span>Постоянное улучшение и отказ от ортодоксальности; знание — общий актив.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section id="how" class="band-white">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow muted">Как это работает</span>
+      <h2>Жизненный цикл проекта</h2>
+      <p>Любой проект кооперативного взаимодействия проходит через систему по единому маршруту — от заявки до распределения результата.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="no">01</div>
+        <div class="ic mark"><svg viewBox="0 0 124 120"><use href="#sigmaMark"/></svg></div>
+        <h3>Проект вносится в систему</h3>
+        <p>Заявка любого типа: трансформация предприятия, общество жильцов, проект совместного действия.</p>
+      </div>
+      <div class="step">
+        <div class="no">02</div>
+        <div class="ic mark"><svg viewBox="0 0 124 120"><use href="#sigmaMark"/></svg></div>
+        <h3>Формируется команда</h3>
+        <p>Под задачу собираются проверенные специалисты из экспертного пула сообщества.</p>
+      </div>
+      <div class="step">
+        <div class="no">03</div>
+        <div class="ic mark"><svg viewBox="0 0 124 120"><use href="#sigmaMark"/></svg></div>
+        <h3>Подключается инфраструктура</h3>
+        <p>Юридическая, методологическая, IT- и медийная поддержка проекта.</p>
+      </div>
+      <div class="step">
+        <div class="no">04</div>
+        <div class="ic mark"><svg viewBox="0 0 124 120"><use href="#sigmaMark"/></svg></div>
+        <h3>Ведётся учёт усилий</h3>
+        <p>Прозрачно и по вкладу каждого участника — на индивидуальных счетах.</p>
+      </div>
+      <div class="step">
+        <div class="no">05</div>
+        <div class="ic mark"><svg viewBox="0 0 124 120"><use href="#sigmaMark"/></svg></div>
+        <h3>Распределяется результат</h3>
+        <p>Справедливо. Идеи и наработки защищены и капитализируются как общий актив.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROJECT TYPES ================= -->
+<section id="types">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow muted">Проекты</span>
+      <h2>Проекты самого разного типа</h2>
+      <p>Система не ограничивает форму совместного действия. Объединяет одно — кооперативное взаимодействие и справедливое распределение результата.</p>
+    </div>
+    <div class="chips">
+      <span class="chip"><span class="pre">→</span>Трансформация предприятий в солидарные экосистемы</span>
+      <span class="chip"><span class="pre">→</span>Потребительские общества жильцов</span>
+      <span class="chip"><span class="pre">→</span>Проекты совместного действия</span>
+      <span class="chip"><span class="pre">→</span>Производственные кооперативные команды</span>
+      <span class="chip"><span class="pre">→</span>Выкуп бизнеса коллективом</span>
+      <span class="chip"><span class="pre">→</span>Запуск новых кооперативов</span>
+      <span class="chip"><span class="pre">→</span>Развитие сельских территорий</span>
+      <span class="chip"><span class="pre">→</span>Совместные закупки и сбыт</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MODULES ================= -->
+<section id="mods" class="band-white">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow muted">Возможности</span>
+      <h2>Что система даёт проекту</h2>
+      <p>Восемь несущих модулей — то, что в одиночку собрать дорого и долго, а в кооперативе доступно сразу.</p>
+    </div>
+    <div class="mods">
+      <div class="mod"><div class="mno">01</div><div class="mic mark"><svg viewBox="0 0 124 120"><use href="#sigmaMark"/></svg></div><h3>База знаний и методология</h3><p>Живая «Библиотека солидарных решений»: методики, стандарты, финансовые модели, ПО.</p></div>
+      <div class="mod"><div class="mno">02</div><div class="mic mark"><svg viewBox="0 0 124 120"><use href="#sigmaMark"/></svg></div><h3>Команды и инфраструктура</h3><p>Сборка междисциплинарных команд под проект и готовые рельсы для совместной работы.</p></div>
+      <div class="mod"><div class="mno">03</div><div class="mic mark"><svg viewBox="0 0 124 120"><use href="#sigmaMark"/></svg></div><h3>Справедливый учёт и распределение</h3><p>Вклад каждого виден и вознаграждается; участники становятся совладельцами результата.</p></div>
+      <div class="mod"><div class="mno">04</div><div class="mic mark"><svg viewBox="0 0 124 120"><use href="#sigmaMark"/></svg></div><h3>Защита и капитализация идей</h3><p>Среда нового типа для защиты и капитализации идей и интеллектуальной собственности.</p></div>
+      <div class="mod"><div class="mno">05</div><div class="mic mark"><svg viewBox="0 0 124 120"><use href="#sigmaMark"/></svg></div><h3>Юридическая поддержка</h3><p>Сопровождение кооперативов, соглашений и сделок на всех этапах проекта.</p></div>
+      <div class="mod"><div class="mno">06</div><div class="mic mark"><svg viewBox="0 0 124 120"><use href="#sigmaMark"/></svg></div><h3>Методологическая поддержка</h3><p>Стандарты, фасилитация коллегиальных решений, арбитраж напряжений.</p></div>
+      <div class="mod"><div class="mno">07</div><div class="mic mark"><svg viewBox="0 0 124 120"><use href="#sigmaMark"/></svg></div><h3>Медийная поддержка</h3><p>Продвижение проектов и кооперативного движения в целом: контент, PR, медиа.</p></div>
+      <div class="mod"><div class="mno">08</div><div class="mic mark"><svg viewBox="0 0 124 120"><use href="#sigmaMark"/></svg></div><h3>Обучение</h3><p>Программы по всем направлениям деятельности участников сообществ и команд поддержки.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= JOIN / FEEDBACK ================= -->
+<section id="join" class="join">
+  <span class="join-bg mark"><svg viewBox="0 0 124 120"><use href="#sigmaMark"/></svg></span>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Присоединиться</span>
+      <h2>Внести проект или войти в систему</h2>
+      <p>Оставьте заявку — мы свяжемся, разберём задачу и предложим маршрут. Кооперация начинается с решения.</p>
+    </div>
+    <div class="join-grid">
+      <div class="join-points">
+        <div class="jp"><span class="sq"></span><div><b>Специалистам</b><span>Команда, инфраструктура и поток проектов вместо работы в одиночку.</span></div></div>
+        <div class="jp"><span class="sq"></span><div><b>Собственникам</b><span>Способ соединить доходность капитала с энергией и лояльностью коллектива.</span></div></div>
+        <div class="jp"><span class="sq"></span><div><b>Коллективам и жильцам</b><span>Готовый путь к совместному действию и владению его результатом.</span></div></div>
+        <div class="jp"><span class="sq"></span><div><b>Партнёрам и территориям</b><span>Союз в улучшении качества жизни и развитии на местах.</span></div></div>
+        <div class="jp-or">Уже участник? <a href="#" data-login>Войдите в личный кабинет →</a></div>
+      </div>
+
+      <form class="fb" id="fbForm" novalidate>
+        <div id="fbFields">
+          <h3>Оставить заявку</h3>
+          <p class="fb-sub">Расскажите о проекте или о себе — этого достаточно для первого шага.</p>
+          <div class="field row2">
+            <div class="sub">
+              <label for="f-name">Имя <span class="req">*</span></label>
+              <input type="text" id="f-name" name="name" autocomplete="name" placeholder="Как к вам обращаться">
+              <div class="err">Укажите имя</div>
+            </div>
+            <div class="sub">
+              <label for="f-email">E-mail <span class="req">*</span></label>
+              <input type="email" id="f-email" name="email" autocomplete="email" placeholder="you@example.ru">
+              <div class="err">Укажите корректный e-mail</div>
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-role">Я представляю</label>
+            <select id="f-role" name="role">
+              <option value="Специалист">Специалист — хочу в команду</option>
+              <option value="Собственник">Собственник бизнеса</option>
+              <option value="Коллектив/жильцы">Коллектив или жильцы дома</option>
+              <option value="Инвестор">Инвестор</option>
+              <option value="Партнёр/муниципалитет">Партнёр или муниципалитет</option>
+              <option value="Другое">Другое</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-msg">Сообщение <span class="req">*</span></label>
+            <textarea id="f-msg" name="message" placeholder="Опишите проект, задачу или вопрос"></textarea>
+            <div class="err">Напишите хотя бы пару слов</div>
+          </div>
+          <label class="consent">
+            <input type="checkbox" id="f-consent" name="consent">
+            <span>Согласен на обработку персональных данных в соответствии с 152-ФЗ и политикой конфиденциальности.</span>
+          </label>
+          <div class="err" id="consentErr" style="margin:-12px 0 14px">Нужно согласие на обработку данных</div>
+          <button class="btn btn-primary" type="submit">Отправить заявку</button>
+        </div>
+        <div class="fb-done" id="fbDone">
+          <div class="mk mark"><svg viewBox="0 0 124 120"><use href="#sigmaMark"/></svg></div>
+          <h3>Заявка принята</h3>
+          <p id="fbDoneMsg">Спасибо! Мы свяжемся с вами по указанному e-mail. Если удобнее — напишите напрямую на coop-sigma@bk.ru.</p>
+          <button class="btn btn-ghost again" type="button" id="fbAgain">Отправить ещё одну</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a class="brand" href="#top">
+          <span class="mk mark"><svg viewBox="0 0 124 120"><use href="#sigmaMark"/></svg></span>
+          <span class="nm">ПК&nbsp;СЭК&nbsp;«СИГМА»<small>Операционная система кооперации</small></span>
+        </a>
+        <p>Среда для совместного действия: проекты, команды, инфраструктура поддержки и общая база знаний кооперативного движения.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Система</h4>
+        <a href="#what">Что это</a>
+        <a href="#how">Как это работает</a>
+        <a href="#types">Типы проектов</a>
+        <a href="#mods">Возможности</a>
+      </div>
+      <div class="foot-col">
+        <h4>Контакты</h4>
+        <a href="mailto:coop-sigma@bk.ru">coop-sigma@bk.ru</a>
+        <a href="https://www.sigmacoop.ru" target="_blank" rel="noopener">www.sigmacoop.ru</a>
+        <a href="#join">Оставить заявку</a>
+        <a href="#" data-login>Личный кабинет</a>
+      </div>
+    </div>
+    <div class="req">
+      <b>Потребительский кооператив Социально-экономический комплекс «СИГМА»</b><br>
+      129626, г. Москва, вн.тер.г. муниципальный округ Алексеевский, пр-кт Мира, д. 102, к. 1, помещ. 3/7
+      <span class="br"></span>
+      <b>ИНН</b> 9717185129 <span class="sep">·</span> <b>ОГРН</b> 1257700471962 <span class="sep">·</span> <b>КПП</b> 771701001
+      <span class="br"></span>
+      Председатель правления — Бережной Дмитрий Константинович
+    </div>
+  </div>
+</footer>
+
+<!-- ================= LOGIN MODAL ================= -->
+<div class="modal-back" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="lmTitle">
+  <div class="modal">
+    <button class="x" type="button" id="lmClose" aria-label="Закрыть">×</button>
+    <div class="mk mark"><svg viewBox="0 0 124 120"><use href="#sigmaMark"/></svg></div>
+    <h3 id="lmTitle">Вход для участников</h3>
+    <p class="m-sub">Личный кабинет участника системы: проекты, команды, учёт вклада и база знаний.</p>
+    <form id="loginForm" novalidate>
+      <div class="field">
+        <label for="l-email">E-mail</label>
+        <input type="email" id="l-email" placeholder="you@example.ru">
+      </div>
+      <div class="field">
+        <label for="l-pass">Пароль</label>
+        <input type="password" id="l-pass" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary" type="submit">Войти</button>
+    </form>
+    <p class="m-note" id="lmNote">Личные кабинеты подключаются по мере онбординга участников. Если вы ещё не в системе — <a href="#join" id="lmToJoin">оставьте заявку</a>.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // smooth scroll for data-scroll + nav anchors close mobile menu
+  document.querySelectorAll('[data-scroll]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var t=document.querySelector(b.getAttribute('data-scroll'));
+      if(t) t.scrollIntoView({behavior:'smooth'});
+    });
+  });
+
+  // mobile menu
+  var burger=document.getElementById('burger'), menu=document.getElementById('menu');
+  if(burger){burger.addEventListener('click',function(){menu.classList.toggle('open');});}
+  menu&&menu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){menu.classList.remove('open');});});
+
+  // reveal console rows when in view
+  var console_=document.getElementById('console');
+  if('IntersectionObserver' in window && console_){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ console_.classList.add('reveal-on'); io.disconnect(); } });
+    },{threshold:.25});
+    io.observe(console_);
+  } else if(console_){ console_.classList.add('reveal-on'); }
+
+  // ---- login modal ----
+  var lm=document.getElementById('loginModal'), lmClose=document.getElementById('lmClose');
+  function openLogin(e){ if(e)e.preventDefault(); lm.classList.add('open'); var f=document.getElementById('l-email'); setTimeout(function(){f&&f.focus();},60); }
+  function closeLogin(){ lm.classList.remove('open'); }
+  document.querySelectorAll('[data-login]').forEach(function(b){ b.addEventListener('click',openLogin); });
+  lmClose&&lmClose.addEventListener('click',closeLogin);
+  lm&&lm.addEventListener('click',function(e){ if(e.target===lm) closeLogin(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeLogin(); });
+  document.getElementById('lmToJoin').addEventListener('click',function(){ closeLogin(); });
+  document.getElementById('loginForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    var note=document.getElementById('lmNote');
+    note.innerHTML='Спасибо! Доступ в личный кабинет открывается по мере онбординга. Мы напишем на указанный e-mail. Чтобы ускорить — <a href="#join" id="lmToJoin2">оставьте заявку</a>.';
+    var l=document.getElementById('lmToJoin2'); if(l) l.addEventListener('click',closeLogin);
+  });
+
+  // ---- feedback form ----
+  var form=document.getElementById('fbForm');
+  function setBad(id,bad){ var el=document.getElementById(id).closest('.field'); if(el) el.classList.toggle('bad',bad); }
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var name=document.getElementById('f-name'),
+        email=document.getElementById('f-email'),
+        msg=document.getElementById('f-msg'),
+        consent=document.getElementById('f-consent'),
+        cErr=document.getElementById('consentErr');
+    var ok=true;
+    var nameBad=!name.value.trim(); setBad('f-name',nameBad); if(nameBad) ok=false;
+    var emailBad=!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim()); setBad('f-email',emailBad); if(emailBad) ok=false;
+    var msgBad=msg.value.trim().length<2; setBad('f-msg',msgBad); if(msgBad) ok=false;
+    var cBad=!consent.checked; cErr.style.display=cBad?'block':'none'; if(cBad) ok=false;
+    if(!ok){ var firstBad=form.querySelector('.field.bad input,.field.bad textarea'); if(firstBad) firstBad.focus(); return; }
+
+    // no backend: build a mailto fallback + show confirmation
+    var role=document.getElementById('f-role').value;
+    var subject=encodeURIComponent('Заявка с сайта · '+role+' · '+name.value.trim());
+    var body=encodeURIComponent('Имя: '+name.value.trim()+'\nE-mail: '+email.value.trim()+'\nКто: '+role+'\n\n'+msg.value.trim());
+    document.getElementById('fbDoneMsg').innerHTML='Спасибо, '+name.value.trim().replace(/</g,'&lt;')+'! Мы свяжемся с вами по адресу '+email.value.trim().replace(/</g,'&lt;')+'. Если удобнее — <a href="mailto:coop-sigma@bk.ru?subject='+subject+'&body='+body+'" style="color:var(--green);border-bottom:1px solid rgba(39,198,156,.4)">отправьте письмо напрямую</a>.';
+    document.getElementById('fbFields').style.display='none';
+    document.getElementById('fbDone').style.display='block';
+  });
+  document.getElementById('fbAgain').addEventListener('click',function(){
+    form.reset();
+    document.querySelectorAll('.field.bad').forEach(function(f){f.classList.remove('bad');});
+    document.getElementById('consentErr').style.display='none';
+    document.getElementById('fbDone').style.display='none';
+    document.getElementById('fbFields').style.display='block';
+    document.getElementById('f-name').focus();
+  });
+})();
+</script>
+</body>
+</html>
